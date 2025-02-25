@@ -1,53 +1,59 @@
 const Header = (props) => {
-  return (
-    <h1>{props.course}</h1>
-  )
+  console.log(props)
+  return <h1>{props.course}</h1>
 }
 
 const Part = (props) => {
   return (
     <p>
-      {props.description} {props.exercise}
+      {props.name} {props.exercise}
     </p>
-  )
-}
+  );
+};
+
 const Content = (props) => {
   return (
     <div> 
-      <Part description={props.part[0].description} exercise={props.part[0].exercises} />
-      <Part description={props.part[1].description} exercise={props.part[1].exercises} />
-      <Part description={props.part[2].description} exercise={props.part[2].exercises} />
+      {
+        props.parts.map((part, index) => (
+          <Part key={index} name={part.name} exercise={part.exercises} />
+        ))
+      }
     </div>
   );
 };
 
 const Total = (props) => {
-  return (
-    <p>Number of exercises {props.part[0].exercises + props.part[1].exercises + props.part[2].exercises}</p>
-  )
-}
+  const totalExercises = props.parts.reduce((sum, part) => sum + part.exercises, 0);
+
+  return <p>Number of exercises {totalExercises}</p>;
+};
+
+
 const App = () => {
-  const course = 'Half Stack application development';
-  const parts = [
-    {
-      description: 'Fundamentals of React',
-      exercises: 10
-    },
-    {
-      description: 'Using props to pass data',
-      exercises: 7
-    },
-    {
-      description: 'State of a component',
-      exercises: 14
-    }
-  ]
-  
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        name: 'Fundamentals of React',  
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
+  }
+
   return (
     <div>
-      <Header course={course} />
-      <Content part={parts} />    
-      <Total  part={parts} />
+      <Header course={course.name} />
+      <Content parts={course.parts} />    
+      <Total parts={course.parts} />
     </div>
   );
 }
