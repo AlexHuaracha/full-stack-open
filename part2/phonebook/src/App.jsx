@@ -49,7 +49,6 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
     personService
       .getAll()
       .then(initialPersons => {
@@ -81,21 +80,16 @@ const App = () => {
   }
 
   const handleNameChange = (event) => {
-    // console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
   const handleFilterChange = (event) => {
-    // console.log(event.target.value)
     setFilter(event.target.value);
   }
-
-  // console.log('render', persons)
   
   return (
     <div>
