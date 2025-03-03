@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import Person from './components/Person'
 
 const Filter = ({ filter, handleFilterChange }) => {
   return (
@@ -25,16 +26,31 @@ const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNum
   )
 }
 
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, setPersons }) => {
   const personsToShow = persons.filter(
     person => person.name.toLowerCase().includes(filter.toLowerCase())
   )
+
+  const deletePerson = (id) => {
+    if (confirm(`Delete ${persons.find(person => person.id === id).name} ?`)) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
 
   return (
     <div>
       {
         personsToShow.map(person => 
-          <p key={person.id}>{person.name} {person.number}</p>
+          <Person 
+            key={person.id} 
+            name={person.name} 
+            number={person.number} 
+            deletePerson={() => deletePerson(person.id)}
+          />
         )
       }
     </div>
@@ -105,10 +121,11 @@ const App = () => {
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
+        setPersons={setPersons}
       />
       
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} setPersons={setPersons} />
       
     </div>
   )
