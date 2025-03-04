@@ -63,8 +63,8 @@ const Notification = ({ message }) => {
   }
 
   return (
-    <div className='message'>
-      {message}
+    <div className={message.type === 'success' ? 'success' : 'error'}>
+      {message.text}
     </div>
   )
 }
@@ -108,7 +108,10 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        setMessage(`Added ${returnedPerson.name}`)
+        setMessage({
+          text: `Added ${returnedPerson.name}`,
+          type: 'success'
+        })
         setTimeout(() => {
           setMessage(null)
         }, 1500)
@@ -126,6 +129,16 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        setMessage({
+          text: `Information of ${person.name} has already been removed from server`,
+          type: 'error'
+        })
+        setTimeout(() => {
+          setMessage(null)
+        }, 1500)
+        setPersons(persons.filter(person => person.id !== id))
+      })
   }
 
   const handleNameChange = (event) => {
@@ -139,6 +152,8 @@ const App = () => {
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   }
+
+  console.log('props message', message);
   
   return (
     <div>
