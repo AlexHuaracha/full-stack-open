@@ -17,13 +17,16 @@ app.get('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// app.get('/info', (req, res) => {
-//     const date = new Date()
-//     res.send(`
-//         <p>Phonebook has info for ${persons.length} people</p>
-//         <p>${date}</p>
-//     `)
-// })
+app.get('/info', (request, response, next) => {
+    const date = new Date()
+    Person.countDocuments({}).then(result => {
+        response.send(`
+            <p>Phonebook has info for ${result} people</p>
+            <p>${date}</p>
+        `)
+    })
+    .catch(error => next(error))
+})
 
 app.get('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
