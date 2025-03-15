@@ -10,10 +10,11 @@ app.get('/' , (req, res) => {
     res.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(result => {
         response.json(result)
     })
+    .catch(error => next(error))
 })
 
 // app.get('/info', (req, res) => {
@@ -36,7 +37,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if(!body.name || !body.number) {
@@ -59,6 +60,7 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson)
     })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -79,12 +81,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 
     Person.findByIdAndUpdate(request.params.id, person, { new: true })
         .then(updatedPerson => {
-            if (updatedPerson) {
-                response.json(updatedPerson)
-            }
-            else {
-                response.status(404).end()
-            }
+            response.json(updatedPerson)
         })
         .catch(error => next(error))
 })
