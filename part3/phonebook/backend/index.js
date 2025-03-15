@@ -3,8 +3,8 @@ const express = require('express')
 const Person = require('./models/person')
 
 const app = express();
-app.use(express.json())
 app.use(express.static('dist'))
+app.use(express.json())
 
 app.get('/' , (req, res) => {
     res.send('<h1>Hello World!</h1>')
@@ -24,19 +24,17 @@ app.get('/api/persons', (request, response) => {
 //     `)
 // })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
     Person.findById(id).then(person => {
-        response.json(person)
+        if (person) {
+            response.json(person)
+        } else {
+            response.status(404).end()
+        }
     })
+    .catch(error => next(error))
 })
-
-// app.delete('/api/persons/:id', (req, res) => {
-//     const id = req.params.id
-//     persons = persons.filter(person => person.id !== id)
-    
-//     res.status(204).end()
-// })
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
@@ -61,6 +59,34 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson)
     })
+})
+
+app.delete('/api/persons/:id', (request, response, next) => {
+    Person.findByIdAndDelete(request.params.id)
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+        .then(updatedPerson => {
+            if (updatedPerson) {
+                response.json(updatedPerson)
+            }
+            else {
+                response.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
