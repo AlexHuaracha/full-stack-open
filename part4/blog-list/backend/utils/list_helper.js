@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const dummy = (blogs) => {
   return 1
 }
@@ -18,8 +20,22 @@ const favoriteBlog = (blogs) => {
   }
 }
 
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) {
+    return null;
+  }
+
+  // Returns the composed aggregate object.
+  const authors = _.countBy(blogs, 'author')
+  // Transform the object into an array of objects with author and blog counts
+  const authorBlogCounts = _.map(authors, (count, author) => ({ author, blogs: count }))
+  // Returns the object with the highest blog count
+  return _.maxBy(authorBlogCounts, 'blogs')
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
