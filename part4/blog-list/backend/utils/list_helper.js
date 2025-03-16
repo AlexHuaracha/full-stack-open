@@ -22,7 +22,7 @@ const favoriteBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
   if (blogs.length === 0) {
-    return null;
+    return null
   }
 
   // Returns the composed aggregate object.
@@ -33,9 +33,23 @@ const mostBlogs = (blogs) => {
   return _.maxBy(authorBlogCounts, 'blogs')
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return null
+  }
+
+  // Returns the composed aggregate object.
+  const authors = _.groupBy(blogs, 'author')
+  // Transform the object into an array of objects with author and like counts
+  const authorLikeCounts = _.map(authors, (blogs, author) => ({ author, likes: totalLikes(blogs) }))
+  // Returns the object with the highest like count
+  return _.maxBy(authorLikeCounts, 'likes')
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
