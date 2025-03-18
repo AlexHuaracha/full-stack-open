@@ -76,6 +76,23 @@ test('blog without title is not added', async () => {
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 })
 
+test('blog without URL is not added', async () => {
+  const newBlog = {
+    title: 'Test blog',
+    author: 'Test author',
+    likes: 0
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+})
+
 test('a specific blog can be viewed', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToView = blogsAtStart[0]
@@ -104,7 +121,7 @@ test('a blog can be deleted', async () => {
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 })
 
-test.only('blog without likes is added with default likes 0', async () => {
+test('blog without likes is added with default likes 0', async () => {
   const newBlog = {
     title: 'Default likes blog',
     author: 'Test author',
