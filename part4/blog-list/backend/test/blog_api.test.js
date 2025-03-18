@@ -104,6 +104,28 @@ test('a blog can be deleted', async () => {
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 })
 
+test.only('blog without likes is added with default likes 0', async () => {
+  const newBlog = {
+    title: 'Default likes blog',
+    author: 'Test author',
+    url: 'https://test.com/',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+  const addedBlog = blogsAtEnd.find(blog => blog.title === 'Default likes blog')
+  assert.strictEqual(addedBlog.likes, 0)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
+
+// npm test -- --test-only
