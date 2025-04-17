@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
-  const [detailsVisible, setDetailsVisible] = useState(false)
+const Blog = ({ blog, updateBlog }) => {
+  const [visible, setVisible] = useState(false)
+  const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -11,30 +13,43 @@ const Blog = ({ blog }) => {
     marginBottom: 5
   }
 
-  const toggleDetails = () => {
-    setDetailsVisible(!detailsVisible)
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
+
+  const handleLike = async () => {
+    const updatedBlog = {
+      ...blog,
+      likes: likes + 1
+    }
+    
+    try {
+      const returnedBlog = await blogService.update(blog.id, updatedBlog)
+      setLikes(returnedBlog.likes)
+      updateBlog(returnedBlog)
+    } catch (error) {
+      console.error('Error updating likes:', error)
+    }
   }
 
   return (
     <div style={blogStyle}>
       <div>
         {blog.title} {blog.author}
-        <button onClick={toggleDetails}>
-          {detailsVisible ? 'hide' : 'view'}
-        </button>
+        <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
       </div>
-      {detailsVisible && (
+      {visible && (
         <div>
           <div>{blog.url}</div>
           <div>
-            likes {blog.likes}
-            <button>like</button>
+            likes {likes}
+            <button onClick={handleLike}>like</button>
           </div>
-          <div>{blog.author}</div>
+          <div>{blog.user?.name}</div>
         </div>
       )}
     </div>
-  ) 
+  )
 }
 
 export default Blog
