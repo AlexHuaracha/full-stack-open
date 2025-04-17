@@ -28,6 +28,30 @@ const App = () => {
     }
   }, [])
   
+  const addBlog = async (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: title,
+      author: author,
+      url: url,
+      likes: likes,
+      user: user.id
+    }
+    
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+        setLikes('')
+      })
+      .catch(error => {
+        console.error('Error creating blog:', error)
+      })
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -84,7 +108,10 @@ const App = () => {
 
   const blogForm = () => {
     return (
-      <form>
+      <form onSubmit={addBlog}>
+        <div>
+          <h2>create new</h2>
+        </div>
         <div>
           title
           <input
@@ -125,7 +152,7 @@ const App = () => {
           user
           <input
             type="text"
-            value={user}
+            value={user.name}
             name="User"
             readOnly
           />
@@ -135,6 +162,8 @@ const App = () => {
     )
   }
 
+  // console.log('user', user)
+
   return (
     <div>
       <h2>blogs</h2>
@@ -143,7 +172,6 @@ const App = () => {
       {user && <div>
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
-        <h3>create new</h3>
         {blogForm()}
         </div>
       }
