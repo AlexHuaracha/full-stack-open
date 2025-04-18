@@ -22,12 +22,12 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
       const updatedBlog = {
         ...blog,
         likes: likes + 1,
-        user: typeof blog.user === 'object' ? (blog.user.id || blog.user._id) : blog.user      
+        user: typeof blog.user === 'object' ? (blog.user.id || blog.user._id) : blog.user
       }
-      
+
       const returnedBlog = await blogService.update(blog.id, updatedBlog)
       setLikes(returnedBlog.likes)
-      
+
       updateBlog(returnedBlog)
     } catch (error) {
       console.error('Error updating likes:', error)
@@ -46,8 +46,8 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   }
 
   const isOwner = user && blog.user && (
-    user.username === blog.user.username || 
-    user.id === blog.user.id || 
+    user.username === blog.user.username ||
+    user.id === blog.user.id ||
     user.id === blog.user
   )
 
