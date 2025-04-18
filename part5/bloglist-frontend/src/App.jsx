@@ -60,6 +60,10 @@ const App = () => {
     ))
   }
 
+  const removeBlog = (id) => {
+    setBlogs(blogs.filter(blog => blog.id !== id))
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -130,12 +134,13 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           
-          {/* Use the sorted blogs array here */}
           {sortedBlogs.map(blog =>
             <Blog 
               key={blog.id} 
               blog={blog} 
-              updateBlog={updateBlog} 
+              updateBlog={updateBlog}
+              removeBlog={removeBlog}
+              user={user}
             />
           )}
         </div>
