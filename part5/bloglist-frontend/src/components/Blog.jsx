@@ -18,14 +18,15 @@ const Blog = ({ blog, updateBlog }) => {
   }
 
   const handleLike = async () => {
-    const updatedBlog = {
-      ...blog,
-      likes: likes + 1
-    }
-    
     try {
+      const updatedBlog = {
+        ...blog,
+        likes: likes + 1,
+        user: typeof blog.user === 'object' ? (blog.user.id || blog.user._id) : blog.user      }
+      
       const returnedBlog = await blogService.update(blog.id, updatedBlog)
       setLikes(returnedBlog.likes)
+      
       updateBlog(returnedBlog)
     } catch (error) {
       console.error('Error updating likes:', error)
