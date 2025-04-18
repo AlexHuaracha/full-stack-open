@@ -60,7 +60,6 @@ const App = () => {
     ))
   }
 
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -112,38 +111,35 @@ const App = () => {
     )
   }
 
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
   // console.log('user', user)
 
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={successMessage} type='success' />
-      <Notification message={errorMessage} type='error' />
       
-      {!user && loginForm()}
-      {user && <div>
+      <Notification message={successMessage} type="success" />
+      <Notification message={errorMessage} type="error" />
+      
+      {user === null ? 
+        loginForm() : 
         <div>
-          <span>{user.name} logged in </span>
-          <button onClick={handleLogout}>logout</button>
+          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
+          
+          {/* Use the sorted blogs array here */}
+          {sortedBlogs.map(blog =>
+            <Blog 
+              key={blog.id} 
+              blog={blog} 
+              updateBlog={updateBlog} 
+            />
+          )}
         </div>
-        <Togglable buttonLabel='new blog' ref={blogFormRef}>
-          <BlogForm createBlog={addBlog} />        
-        </Togglable>  
-        
-        </div>
-
       }
-
-      {blogs.map(blog =>
-        <Blog 
-          key={blog.id} 
-          blog={blog}
-          updateBlog={updateBlog}
-        />
-      )}
-
-      
-      
     </div>
   )
 }
