@@ -1,7 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
-import { expect } from 'vitest'
+import blogService from '../services/blogs'
+import { expect, vi } from 'vitest'
+
+vi.mock('../services/blogs', () => ({
+  default: {
+    update: vi.fn().mockImplementation(() => Promise.resolve({ id: '123456', likes: 11 }))
+  }
+}))
 
 test('renders content', () => {
   const blog = {
@@ -67,4 +74,38 @@ test('URL and likes are shown when the view button is clicked', async () => {
 
   expect(urlElement).toBeInTheDocument()
   expect(likesElement).toBeInTheDocument()
+})
+
+test('if like button is clicked twice, event handler is called twice', async () => {
+  const blog = {
+    id: '123456',
+    title: 'Test Blog',
+    author: 'Test Author',
+    url: 'http://testblog.com',
+    likes: 10,
+    user: { id: 'testuser123' }
+  }
+
+  const mockUpdateHandler = vi.fn()
+  console.log('Mock before test:', mockUpdateHandler)
+
+  render(<Blog
+    blog={blog}
+    updateBlog={mockUpdateHandler}
+    user={{ id: 'testuser123' }}
+  />)
+
+  const user = userEvent.setup()
+
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockUpdateHandler).toHaveBeenCalledTimes(2)
+
+  expect(blogService.update).toHaveBeenCalledTimes(2)
 })
